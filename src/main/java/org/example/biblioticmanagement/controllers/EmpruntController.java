@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class EmpruntController {
 
     // Create a new emprunt
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Emprunt> createEmprunt(@RequestBody Emprunt emprunt) {
         // Fetch the Livre from the service to ensure it exists and has the required data
         Livre livre = livreService.getLivreById(emprunt.getLivre().getId());
@@ -93,6 +95,7 @@ public class EmpruntController {
 
     // Get all emprunts
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Emprunt>> getAllEmprunts() {
         List<Emprunt> emprunts = empruntService.getAllEmprunts();
         return new ResponseEntity<>(emprunts, HttpStatus.OK);
@@ -100,6 +103,7 @@ public class EmpruntController {
 
     // Get an emprunt by ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Emprunt> getEmpruntById(@PathVariable Long id) {
         Emprunt emprunt = empruntService.getEmpruntById(id);
         if (emprunt != null) {
@@ -111,6 +115,7 @@ public class EmpruntController {
 
     // Update an emprunt
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Emprunt> updateEmprunt(@PathVariable Long id, @RequestBody Emprunt emprunt) {
         // Check if the Emprunt with the given ID exists
         Emprunt existingEmprunt = empruntService.getEmpruntById(id);
@@ -152,6 +157,7 @@ public class EmpruntController {
 
     // Delete an emprunt
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Void> deleteEmprunt(@PathVariable Long id) {
         boolean isDeleted = empruntService.deleteEmprunt(id);
         if (isDeleted) {
@@ -162,6 +168,7 @@ public class EmpruntController {
     }
 
     @PutMapping("/setasterminer/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Emprunt> terminerEmprunt(@PathVariable Long id) {
         Emprunt updatedEmprunt = empruntService.setEmpruntAsTerminer(id);
 
@@ -176,6 +183,7 @@ public class EmpruntController {
     }
 
     @PutMapping("/setasretard/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Emprunt> removeEmprunt(@PathVariable Long id) {
         Emprunt updatedEmprunt = empruntService.setEmpruntAsRetard(id);
 
@@ -193,6 +201,7 @@ public class EmpruntController {
     }
 
     @GetMapping("/historiqueofemprunts/{userId}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Emprunt>> getHistoriqueOfEmprunts(@PathVariable Long userId) {
         if(utilisateurService.getUtilisateurById(userId) != null) {
             return new ResponseEntity<>(empruntService.historiqueOfAllMyEmprunts(userId),HttpStatus.OK);
@@ -203,6 +212,7 @@ public class EmpruntController {
 
 
     @GetMapping("/activeemprunts/{userId}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Emprunt>> getActiveEmprunts(@PathVariable Long userId) {
         List<Emprunt> activeEmprunts = empruntService.getActiveEmprunts(userId);
         return new ResponseEntity<>(activeEmprunts, HttpStatus.OK);
@@ -210,6 +220,7 @@ public class EmpruntController {
 
     // Get late emprunts by user ID
     @GetMapping("/lateemprunts/{userId}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Emprunt>> getLateEmprunts(@PathVariable Long userId) {
         List<Emprunt> lateEmprunts = empruntService.getLateEmprunts(userId);
         return new ResponseEntity<>(lateEmprunts, HttpStatus.OK);
@@ -217,6 +228,7 @@ public class EmpruntController {
 
     // Get terminated emprunts by user ID
     @GetMapping("/terminatedemprunts/{userId}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Emprunt>> getTerminatedEmprunts(@PathVariable Long userId) {
         List<Emprunt> terminatedEmprunts = empruntService.getTerminatedEmprunts(userId);
         return new ResponseEntity<>(terminatedEmprunts, HttpStatus.OK);

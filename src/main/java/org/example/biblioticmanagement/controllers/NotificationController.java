@@ -7,6 +7,7 @@ import org.example.biblioticmanagement.services.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class NotificationController {
 
     // Create a new notification
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Notification> createNotification(@RequestBody Notification notification) {
         Notification createdNotification = notificationService.createNotification(notification);
         return new ResponseEntity<>(createdNotification, HttpStatus.CREATED);
@@ -29,6 +31,7 @@ public class NotificationController {
 
     // Get all notifications
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Notification>> getAllNotifications() {
         List<Notification> notifications = notificationService.getAllNotifications();
         return new ResponseEntity<>(notifications, HttpStatus.OK);
@@ -36,6 +39,7 @@ public class NotificationController {
 
     // Get a notification by ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<NotificationDTO> getNotificationById(@PathVariable Long id) {
         Notification notification = notificationService.getNotificationById(id);
         if (notification != null) {
@@ -56,6 +60,7 @@ public class NotificationController {
 
     // Update an existing notification
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Notification> updateNotification(@PathVariable Long id, @RequestBody Notification notification) {
         Notification updatedNotification = notificationService.updateNotification(id, notification);
         if (updatedNotification != null) {
@@ -67,6 +72,7 @@ public class NotificationController {
 
     // Delete a notification by ID
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
         boolean deleted = notificationService.deleteNotification(id);
         if (deleted) {
@@ -77,6 +83,7 @@ public class NotificationController {
     }
 
     @PutMapping("/settotrue/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Notification> setLuToTrue(@PathVariable Long id) {
         Notification notification = notificationService.getNotificationById(id);
         if (notification != null) {
@@ -87,6 +94,7 @@ public class NotificationController {
     }
 
     @GetMapping("/activenotifications/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Notification>> getActiveNotificationsByUserId(@PathVariable Long id) {
         if(utilisateurService.getUtilisateurById(id) != null) {
             return new ResponseEntity<>(notificationService.getActiveNotificationsByUserId(id),HttpStatus.OK);

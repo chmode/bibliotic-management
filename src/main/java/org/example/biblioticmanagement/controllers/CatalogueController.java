@@ -5,6 +5,7 @@ import org.example.biblioticmanagement.services.CatalogueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class CatalogueController {
 
     // Create a new catalogue
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Catalogue> createCatalogue(@RequestBody Catalogue catalogue) {
         if (catalogueService.getCatalogueByName(catalogue.getNom()) != null) {
             return new ResponseEntity<>(HttpStatus.CONFLICT); // or appropriate response
@@ -28,6 +30,7 @@ public class CatalogueController {
 
     // Get all catalogues
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<List<Catalogue>> getAllCatalogues() {
         List<Catalogue> catalogues = catalogueService.getAllCatalogues();
         return new ResponseEntity<>(catalogues, HttpStatus.OK);
@@ -35,6 +38,7 @@ public class CatalogueController {
 
     // Get a catalogue by ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Catalogue> getCatalogueById(@PathVariable Long id) {
         Catalogue catalogue = catalogueService.getCatalogueById(id);
         if (catalogue != null) {
@@ -46,6 +50,7 @@ public class CatalogueController {
 
     // Update a catalogue
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Catalogue> updateCatalogue(@PathVariable Long id, @RequestBody Catalogue catalogue) {
         // First, check if the catalogue exists
         Catalogue existingCatalogue = catalogueService.getCatalogueById(id);
@@ -69,6 +74,7 @@ public class CatalogueController {
 
     // Delete a catalogue
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_BIBLIOTHECAIRE', 'SCOPE_UTILISATEUR')")
     public ResponseEntity<Void> deleteCatalogue(@PathVariable Long id) {
         boolean isDeleted = catalogueService.deleteCatalogue(id);
         if (isDeleted) {
